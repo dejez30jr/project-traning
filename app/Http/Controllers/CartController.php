@@ -83,54 +83,73 @@ class CartController extends Controller {
         ] );
     }
 
-    public function checkout( Request $request ) {
-        $cart = session()->get( 'cart', [] );
+   public function checkout(Request $request) {
+    $cart = session()->get('cart', []);
 
-        if ( empty( $cart ) ) {
-            return response()->json( [
-                'success' => false,
-                'message' => 'Keranjang kosong.'
-            ], 400 );
-        }
+    if (empty($cart)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Keranjang kosong.'
+        ], 400);
+    }
 
-        try {
-            foreach ( $cart as $id => $item ) {
-                $product = Product::find( $id );
+    try {
+        $receipt = [];  // Ini untuk menampung data struk
 
-                if ( !$product ) {
-                    return response()->json( [
-                        'success' => false,
-                        'message' => "Produk ID $id tidak ditemukan."
-                    ], 404 );
-                }
+        foreach ($cart as $id => $item) {
+            $product = Product::find($id);
 
-                if ( $product->stock < $item[ 'quantity' ] ) {
-                    return response()->json( [
-                        'success' => false,
-                        'message' => "Stok tidak cukup untuk {$item['name']}."
-                    ], 400 );
-                }
-
-                $product->stock -= $item[ 'quantity' ];
-                $product->save();
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Produk ID $id tidak ditemukan."
+                ], 404);
             }
 
-            session()->forget( 'cart' );
+            if ($product->stock < $item['quantity']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Stok tidak cukup untuk {$item['name']}."
+                ], 400);
+            }
 
-            return response()->json( [
-                'success' => true,
-                'message' => 'Checkout berhasil! Stok diperbarui.',
-                'total' => 0 // karena keranjang dikosongkan
-            ] );
+            $product->stock -= $item['quantity'];
+            $product->save();
 
-        } catch ( \Exception $e ) {
-            Log::error( 'Checkout error: ' . $e->getMessage() );
-            return response()->json( [
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat checkout.'
-            ], 500 );
+            // Simpan ke struk
+            $receipt['items'][] = [
+                'name' => $item['name'],
+                'quantity' => $item['quantity'],
+                'subtotal' => $item['price'] * $item['quantity'],
+            ];
         }
+
+        // Total
+        $total = collect($cart)->reduce(function ($carry, $item) {
+            return $carry + ($item['price'] * $item['quantity']);
+        }, 0);
+
+        // Simpan data struk
+        $receipt['order_id'] = 'INV-' . rand(1000, 9999);  // Generasi Order ID
+        $receipt['tanggal'] = now()->toDateString();  // Tanggal
+        $receipt['total'] = $total;
+
+        session()->forget('cart');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Checkout berhasil!',
+            'receipt' => $receipt
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Checkout error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat checkout.'
+        ], 500);
     }
+}
+
 
 }
 // ...existing code...

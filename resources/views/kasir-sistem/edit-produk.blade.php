@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>edit</title>
+    <title>edit produk kasir deris</title>
     <script src="https://cdn.tailwindcss.com"></script>
+        <!-- !!!! copy right derisdev !!!!! -->
 </head>
 <style>
   body{

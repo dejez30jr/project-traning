@@ -33,8 +33,8 @@ class ProductController extends Controller {
             'kategori' => 'required',
             'price' => 'required|integer',
             'stock' => 'required|integer',
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'discount' => 'nullable|integer'
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            // 'discount' => 'nullable|integer'
         ] );
         if ( $request->hasFile( 'image' ) ) {
             $imagePath = $request->file( 'image' )->store( 'products', 'public' );
