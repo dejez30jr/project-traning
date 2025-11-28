@@ -1,3 +1,12 @@
+Clone/download zip project nya
+-di vs code terus jalanin dah php artisan server 
+-kalo gabisa di terminal vs code nya ketik aja perintah composer install
+-ketik perintah php artisan migrate
+-dan jangan lupa file .env nya di set rename file .env.example ganti jadi .env
+
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
