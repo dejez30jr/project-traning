@@ -11,7 +11,6 @@
     </li>
     <li>
         dan jangan lupa file .env nya di set rename file .env.example ganti jadi .env
-        
     </li>
 </ul>
 
